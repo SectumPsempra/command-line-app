@@ -44,4 +44,4 @@ To get coverage on the unit tests, please run the following command from the mai
 
 # Author
 
-You can find this code on my github <a href="https://github.com/Sectumpsempra">repository</a> as well.
+You can find this code on my github <a href="https://github.com/SectumPsempra/command-line-app">repository</a> as well.
