@@ -1,5 +1,8 @@
 import unittest
-from src.course_manager import Add, Register, Allot, Cancel
+from src.register import Register
+from src.add import Add
+from src.allot import Allot
+from src.cancel import Cancel
 from src.constants import Constants
 from utils import exceptions
 from utils import utils
