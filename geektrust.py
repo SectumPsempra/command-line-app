@@ -21,7 +21,8 @@ def main():
             except exceptions.INPUT_DATA_ERROR:
                 print("INPUT_DATA_ERROR")
                 continue
-            fn[command](*params)            
+            result = fn[command](*params)
+            utils.print_output(result=result)
     except Exception as err:
         raise err
 

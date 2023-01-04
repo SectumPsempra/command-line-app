@@ -23,6 +23,29 @@ def detect_command(line: str, separator: str=" ") -> list:
     args = line.split(sep=separator)
     return args
 
+def _validate_add(args: list) -> None:
+    _date, _min, _max = args[-3], args[-2], args[-1]
+    if _min < 1:
+        raise exceptions.INPUT_DATA_ERROR(
+            message="Minimum one enrollment must be done"
+        )
+    if _min > _max:
+        raise exceptions.INPUT_DATA_ERROR(
+            message="Max employees can not be less than min employees"
+        )
+    if len(_date) != 8:
+        raise exceptions.INPUT_DATA_ERROR(
+            message="Date should be specified in ddmmyyyy format"
+        )
+    try:
+        datetime.datetime(day=int(_date[:2]),
+                            month=int(_date[2:4]),
+                            year=int(_date[4:]))
+    except Exception as err:
+        raise exceptions.INPUT_DATA_ERROR(
+            message=err
+        )
+
 def validate_command(args: list) -> list:
     cmd_name = args[0]
     updated_args = args[1:]
@@ -42,28 +65,7 @@ def validate_command(args: list) -> list:
         else:
             updated_args[index] = param_value
     if cmd_name == config.ADD:
-        _date, _min, _max = updated_args[-3], updated_args[-2], \
-            updated_args[-1]
-        if _min < 1:
-            raise exceptions.INPUT_DATA_ERROR(
-                message="Minimum one enrollment must be done"
-            )
-        if _min > _max:
-            raise exceptions.INPUT_DATA_ERROR(
-                message="Max employees can not be less than min employees"
-            )
-        if len(_date) != 8:
-            raise exceptions.INPUT_DATA_ERROR(
-                message="Date should be specified in ddmmyyyy format"
-            )
-        try:
-            datetime.datetime(day=int(_date[:2]),
-                              month=int(_date[2:4]),
-                              year=int(_date[4:]))
-        except Exception as err:
-            raise exceptions.INPUT_DATA_ERROR(
-                message=err
-            )
+        _validate_add(args=updated_args)
     return cmd_name, updated_args
 
 def parse_file(arguments):
@@ -78,3 +80,9 @@ def parse_file(arguments):
         )
         raise exceptions.INPUT_DATA_ERROR(message=err_message)
     return lines
+
+def print_output(result) -> None:
+    if isinstance(result, str):
+        print(result)
+    elif isinstance(result, tuple) or isinstance(result, list):
+        print("\n".join(result))
