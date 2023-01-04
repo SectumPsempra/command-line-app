@@ -1,5 +1,5 @@
-import config
-import exceptions
+from config import config
+from utils import exceptions
 import os
 import datetime
 
@@ -12,7 +12,7 @@ def validate_args(args: list) -> None:
         raise exceptions.INPUT_DATA_ERROR(message=err_message)
 
 def validate_path(path: str) -> None:
-    base_dir = os.path.dirname(os.path.realpath(__file__))
+    base_dir = os.path.dirname(os.path.dirname(os.path.realpath(__file__)))
     file_path = os.path.join(base_dir, path)
     if not os.path.isfile(file_path):
         err_message = "File path is not valid or file doesn't exist"

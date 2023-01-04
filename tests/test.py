@@ -1,13 +1,15 @@
 import unittest
-from src.course_manager import CourseManager
-import utils
-import exceptions
+from src.course_manager import Add, Register, Allot, Cancel
+from src.constants import Constants
+from utils import exceptions
+from utils import utils
+
 
 class TestApp(unittest.TestCase):
     def test_add(self):
-        courses = CourseManager()
-        courses.add("Advanced Physics", "Stephen Hawking", "120123", 1, 2)
-        courses.add("Advanced Physics 2", "Stephen Hawking", "120223", 1, 1)
+        courses = Add()
+        courses.execute("Advanced Physics", "Stephen Hawking", "120123", 1, 2)
+        courses.execute("Advanced Physics 2", "Stephen Hawking", "120223", 1, 1)
         expected_output = sorted([
             "OFFERING-Advanced Physics-Stephen Hawking",
             "OFFERING-Advanced Physics 2-Stephen Hawking"
@@ -16,23 +18,25 @@ class TestApp(unittest.TestCase):
         self.assertEqual(expected_output, output)
 
     def test_add_course_full(self):
-        courses = CourseManager()
-        courses.add("Advanced Physics", "Stephen Hawking", "120123", 1, 1)
+        courses = Add()
+        courses.execute("Advanced Physics", "Stephen Hawking", "120123", 1, 1)
         course_id = "OFFERING-Advanced Physics-Stephen Hawking"
         email_id = "test@email.com"
-        courses.register(email_id=email_id, course_id=course_id)
+        courses = Register(courses.courses, courses.course_reg)
+        courses.execute(email_id=email_id, course_id=course_id)
         email_id = "test2@email.com"
-        courses.register(email_id=email_id, course_id=course_id)
+        courses.execute(email_id=email_id, course_id=course_id)
         expected_slots_left = 0
         self.assertEqual(expected_slots_left,
                          courses.courses.get(course_id).get("slots_left"))
 
     def test_register(self):
-        courses = CourseManager()
-        courses.add("Advanced Physics", "Stephen Hawking", "120123", 1, 2)
+        courses = Add()
+        courses.execute("Advanced Physics", "Stephen Hawking", "120123", 1, 2)
         course_id = "OFFERING-Advanced Physics-Stephen Hawking"
         email_id = "test@email.com"
-        courses.register(email_id=email_id, course_id=course_id)
+        courses = Register(courses.courses, courses.course_reg)
+        courses.execute(email_id=email_id, course_id=course_id)
         expected_course_reg_dict = {
             "REG-COURSE-test-Advanced Physics": {
                 "course_id": course_id,
@@ -45,33 +49,38 @@ class TestApp(unittest.TestCase):
                          courses.courses.get(course_id).get("slots_left"))
 
     def test_allot_cancel(self):
-        courses = CourseManager()
-        courses.add("Advanced Physics", "Stephen Hawking", "120123", 1, 2)
+        courses = Add()
+        courses.execute("Advanced Physics", "Stephen Hawking", "120123", 1, 2)
         course_id = "OFFERING-Advanced Physics-Stephen Hawking"
-        courses.allot(course_id=course_id)
-        expected_final_status = CourseManager.FINAL_STATUS_CANCELED
+        courses = Allot(courses.courses, courses.course_reg)
+        courses.execute(course_id=course_id)
+        expected_final_status = Constants.FINAL_STATUS_CANCELED
         self.assertEqual(expected_final_status,
                          courses.courses.get(course_id).get("final_status"))
         
     def test_allot_confirm(self):
-        courses = CourseManager()
-        courses.add("Advanced Physics", "Stephen Hawking", "120123", 1, 2)
+        courses = Add()
+        courses.execute("Advanced Physics", "Stephen Hawking", "120123", 1, 2)
         course_id = "OFFERING-Advanced Physics-Stephen Hawking"
         email_id = "test@email.com"
-        courses.register(email_id=email_id, course_id=course_id)
-        courses.allot(course_id=course_id)
+        courses = Register(courses.courses, courses.course_reg)
+        courses.execute(email_id=email_id, course_id=course_id)
+        courses = Allot(courses.courses, courses.course_reg)
+        courses.execute(course_id=course_id)
         expected_allotment_status = True
         self.assertEqual(expected_allotment_status,
                          courses.courses.get(course_id).get("alloted"))
 
     def test_cancel_accepted(self):
-        courses = CourseManager()
-        courses.add("Advanced Physics", "Stephen Hawking", "120123", 1, 2)
+        courses = Add()
+        courses.execute("Advanced Physics", "Stephen Hawking", "120123", 1, 2)
         course_id = "OFFERING-Advanced Physics-Stephen Hawking"
         email_id = "test@email.com"
-        courses.register(email_id=email_id, course_id=course_id)
+        courses = Register(courses.courses, courses.course_reg)
+        courses.execute(email_id=email_id, course_id=course_id)
         course_reg_id = "REG-COURSE-test-Advanced Physics"
-        courses.cancel(course_reg_id=course_reg_id)
+        courses = Cancel(courses.courses, courses.course_reg)
+        courses.execute(course_reg_id=course_reg_id)
         expected_course_reg = {}
         self.assertEqual(expected_course_reg, courses.course_reg)
         slots_left = 2
@@ -79,14 +88,17 @@ class TestApp(unittest.TestCase):
                          courses.courses.get(course_id).get("slots_left"))
 
     def test_cancel_rejected(self):
-        courses = CourseManager()
-        courses.add("Advanced Physics", "Stephen Hawking", "120123", 1, 2)
+        courses = Add()
+        courses.execute("Advanced Physics", "Stephen Hawking", "120123", 1, 2)
         course_id = "OFFERING-Advanced Physics-Stephen Hawking"
         email_id = "test@email.com"
-        courses.register(email_id=email_id, course_id=course_id)
-        courses.allot(course_id=course_id)
+        courses = Register(courses.courses, courses.course_reg)
+        courses.execute(email_id=email_id, course_id=course_id)
+        courses = Allot(courses.courses, courses.course_reg)
+        courses.execute(course_id=course_id)
         course_reg_id = "REG-COURSE-test-Advanced Physics"
-        courses.cancel(course_reg_id=course_reg_id)
+        courses = Cancel(courses.courses, courses.course_reg)
+        courses.execute(course_reg_id=course_reg_id)
         expected_slots_left = 1
         self.assertEqual(expected_slots_left,
                          courses.courses.get(course_id).get("slots_left"))
