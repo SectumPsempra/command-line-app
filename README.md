@@ -31,22 +31,22 @@ To get coverage on the unit tests, please run the following command from the mai
 </br>
     
     Name                  Stmts   Miss  Cover   Missing
----------------------------------------------------
-config/__init__.py        0      0   100%
-config/config.py          7      0   100%
-src/__init__.py           0      0   100%
-src/add.py               14      0   100%
-src/allot.py             27      0   100%
-src/cancel.py            19      0   100%
-src/constants.py         22      0   100%
-src/register.py          27      0   100%
-tests/__init__.py         0      0   100%
-tests/test.py           134      8    94%   118, 137, 145, 150-151, 170, 181, 184
-utils/__init__.py         0      0   100%
-utils/exceptions.py       4      0   100%
-utils/utils.py           73     19    74%   15-16, 27-28, 36, 50, 80-92, 95-96
----------------------------------------------------
-TOTAL                   327     27    92%
+    ---------------------------------------------------
+    config/__init__.py        0      0   100%
+    config/config.py          7      0   100%
+    src/__init__.py           0      0   100%
+    src/add.py               14      0   100%
+    src/allot.py             27      0   100%
+    src/cancel.py            19      0   100%
+    src/constants.py         22      0   100%
+    src/register.py          27      0   100%
+    tests/__init__.py         0      0   100%
+    tests/test.py           134      8    94%   118, 137, 145, 150-151, 170, 181, 184
+    utils/__init__.py         0      0   100%
+    utils/exceptions.py       4      0   100%
+    utils/utils.py           73     19    74%   15-16, 27-28, 36, 50, 80-92, 95-96
+    ---------------------------------------------------
+    TOTAL                   327     27    92%
 
 
 # Author
